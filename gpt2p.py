@@ -27,7 +27,7 @@ def profile(model: nn.Module, input_shape: tuple, device: torch.device, vocab_si
         torch.cuda.synchronize()
 
         flops, macs, params = calflops.calculate_flops(
-            model=model, input_shape=input_shape, transformers_tokenizer=tokenizer
+            model=model, input_shape=input_shape, transformer_tokenizer=tokenizer
         )
 
         gc.collect()
