@@ -28,7 +28,7 @@ def profile(model: nn.Module, input_shape: tuple, device: torch.device, vocab_si
 
         flops, macs, params = calculate_flops(
             model=model,
-            kwargs={"input_ids": x, "use_cache": False},
+            kwargs={"input_ids": x},
             print_results=False,
         )
 
