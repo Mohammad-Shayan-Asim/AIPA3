@@ -257,7 +257,7 @@ class ResNet(nn.Module):
 def _resnet(arch, block, layers, pretrained, progress, device, **kwargs):
     model = ResNet(block, layers, **kwargs)
     if pretrained:
-        script_dir = "../input/models/shayanasim/resnet-models/pytorch/default/1/"
+        script_dir = "../../input/models/shayanasim/resnet-models/pytorch/default/1/"
         state_dict = torch.load(
             script_dir + arch + ".pt", map_location=device
         )
