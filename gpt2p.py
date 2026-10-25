@@ -27,7 +27,7 @@ def profile(model: nn.Module, input_shape: tuple, device: torch.device, vocab_si
         torch.cuda.synchronize()
 
         flops, macs, params = calculate_flops_hf(
-            model=model, input_shape=input_shape, transformer_tokenizer=tokenizer
+            model_name="gpt2"
         )
 
         gc.collect()
