@@ -27,7 +27,9 @@ def profile(model: nn.Module, input_shape: tuple, device: torch.device, vocab_si
         torch.cuda.synchronize()
 
         flops, macs, params = calculate_flops(
-            model=model, input_data=x, print_results=False,
+            model=model,
+            kwargs={"input_ids": x, "use_cache": False},
+            print_results=False,
         )
 
         gc.collect()
