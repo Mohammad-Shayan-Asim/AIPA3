@@ -1,6 +1,6 @@
 import torch
 import gc
-from calflops import calculate_flops_hf
+from calflops import calculate_flops
 import time
 import threading
 from torch import nn
@@ -10,7 +10,7 @@ def median(x):
     return sorted(x)[len(x)//2]
 
 
-def profile(model: nn.Module, input_shape: tuple, device: torch.device, vocab_size: int = 50257, tokenizer=None):
+def profile(model: nn.Module, input_shape: tuple, device: torch.device, vocab_size: int = 50257):
     with torch.no_grad():
         model.to(device)
         warmup_its = 10
@@ -26,8 +26,8 @@ def profile(model: nn.Module, input_shape: tuple, device: torch.device, vocab_si
 
         torch.cuda.synchronize()
 
-        flops, macs, params = calculate_flops_hf(
-            model_name="gpt2"
+        flops, macs, params = calculate_flops(
+            model=model, input_data=x, print_results=False,
         )
 
         gc.collect()
