@@ -10,7 +10,7 @@ def median(x):
     return sorted(x)[len(x)//2]
 
 
-def profile(model: nn.Module, input_shape: tuple, device: torch.device, vocab_size: int = 50257):
+def profile(model: nn.Module, input_shape: tuple, device: torch.device, vocab_size: int = 50257, tokenizer=None):
     with torch.no_grad():
         model.to(device)
         warmup_its = 10
@@ -27,7 +27,7 @@ def profile(model: nn.Module, input_shape: tuple, device: torch.device, vocab_si
         torch.cuda.synchronize()
 
         flops, macs, params = calflops.calculate_flops(
-            model=model, input_shape=input_shape
+            model=model, input_shape=input_shape, transformers_tokenizer=tokenizer
         )
 
         gc.collect()
