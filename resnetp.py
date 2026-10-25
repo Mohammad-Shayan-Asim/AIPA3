@@ -1,6 +1,6 @@
 import torch
 import gc
-import torchprofile
+# import torchprofile
 import time
 import threading
 from torch import nn
@@ -10,7 +10,7 @@ def median(x):
     return sorted(x)[len(x)//2]
 
 
-def profile(model: nn.Module, input_shape: torch.shape, device: torch.device):
+def profile(model: nn.Module, input_shape, device: torch.device):
     with torch.no_grad():
         model.to(device)
         warmup_its=8
