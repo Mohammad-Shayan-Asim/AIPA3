@@ -1,9 +1,9 @@
-torch==2.14.1
+torch
 torchvision
-transformers==5.20.2
-datasets==5.1.0
-numpy==2.5.4
-tqdm==4.70.1
+transformers
+datasets
+numpy
+tqdm
 calflops
 torchprofile
 scikit-learn
