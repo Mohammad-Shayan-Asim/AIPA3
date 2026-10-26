@@ -32,11 +32,13 @@ def collect_hessians(model, loader, device):
     return {k: (H[k] / cnt[k]).cpu() for k in H}
 
 
-def gptq_layer(W, H, qmax, damp=0.01):
+def gptq_layer(W, H, qmax, damp=0.01, group_size=128):
     """
     GPTQ weight optimisation for Conv1D weight W [in, out].
     Sequentially quantises rows (input features) and compensates remaining rows
     via H^{-1} after each step to minimise output reconstruction error.
+    Per-output-channel scale is recomputed at each group boundary so that
+    accumulated compensations never cause saturation (critical at W4).
     """
     W = W.clone().float()
     d_in = W.size(0)
@@ -49,10 +51,13 @@ def gptq_layer(W, H, qmax, damp=0.01):
         H.diagonal().add_(0.1 * H.diagonal().abs().mean())
         H_inv = torch.cholesky_inverse(torch.linalg.cholesky(H))
 
+    scale = None
     for j in range(d_in):
+        if j % group_size == 0:
+            g_end = min(j + group_size, d_in)
+            scale = (W[j:g_end].abs().amax(dim=0, keepdim=True) / qmax).clamp(min=1e-8)
         w     = W[j]
-        s     = (w.abs().amax() / qmax).clamp(min=1e-8)
-        w_q   = (w / s).round().clamp(-qmax, qmax) * s
+        w_q   = (w / scale[0]).round().clamp(-qmax, qmax) * scale[0]
         delta = w_q - w
         W[j]  = w_q
         if j + 1 < d_in:
