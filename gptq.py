@@ -40,7 +40,6 @@ def gptq_layer(W, H, qmax, damp=0.01):
     """
     W = W.clone().float()
     d_in = W.size(0)
-    scale = (W.abs().amax(dim=0, keepdim=True) / qmax).clamp(min=1e-8)
 
     H = H.clone().float().to(W.device)
     H.diagonal().add_(damp * H.diagonal().abs().mean())
@@ -52,7 +51,8 @@ def gptq_layer(W, H, qmax, damp=0.01):
 
     for j in range(d_in):
         w     = W[j]
-        w_q   = (w / scale[0]).round().clamp(-qmax, qmax) * scale[0]
+        s     = (w.abs().amax() / qmax).clamp(min=1e-8)
+        w_q   = (w / s).round().clamp(-qmax, qmax) * s
         delta = w_q - w
         W[j]  = w_q
         if j + 1 < d_in:
